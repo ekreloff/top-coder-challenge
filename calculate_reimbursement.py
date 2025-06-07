@@ -20,6 +20,18 @@ def adjusted_receipts(receipts: float) -> float:
     else:
         return 800 + 700 * 0.5 + (receipts - 1500) * 0.1
 
+def efficiency_bonus(miles: float, days: int) -> float:
+    """Calculate efficiency bonus based on miles per day."""
+    if days == 0:
+        return 0
+    m_per_day = miles / days
+    if m_per_day <= 200:
+        return m_per_day * 1.0
+    elif m_per_day <= 300:
+        return 200 + (m_per_day - 200) * 0.25
+    else:
+        return 225  # Cap
+
 def basic_reimbursement(days: int, miles: float, receipts: float) -> float:
     PER_DIEM = 150 * (0.85 ** (days - 1))
     
@@ -27,7 +39,8 @@ def basic_reimbursement(days: int, miles: float, receipts: float) -> float:
     reimbursement = (
         PER_DIEM * days +
         mileage_reimbursement +
-        adjusted_receipts(receipts)
+        adjusted_receipts(receipts) +
+        0.25 * efficiency_bonus(miles, days)
     )
 
     return round(reimbursement, 2)
@@ -53,4 +66,4 @@ if __name__ == "__main__":
         print(f"Error occurred: {str(e)}", file=sys.stderr)
         print("Full traceback:", file=sys.stderr)
         traceback.print_exc(file=sys.stderr)
-        sys.exit(1) 
+        sys.exit(1)
